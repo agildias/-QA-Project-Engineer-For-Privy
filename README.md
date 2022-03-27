@@ -1,2 +1,2 @@
-# PrivyID QA project Test
-Pada Strees test Jmeter saya menggunakan access_token dari postman untuk mengisi Authorization di Header Manager
+How to Run Colection Postman
+Click setting at title PrivyID and then click Run Collection
