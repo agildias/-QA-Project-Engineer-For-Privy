@@ -1,0 +1,1384 @@
+{
+	"info": {
+		"_postman_id": "3fc8030b-4b4a-4cf3-b244-598d1b48b52d",
+		"name": "PrivyID",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "01 - Register",
+			"item": [
+				{
+					"name": "01 - 001 - Register User By Phone",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"\r",
+									"pm.test(\"already been taken\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"Phone has already been taken\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"phone\" : \"089089123123\",\r\n    \"password\" : \"agil0207\",\r\n    \"country\" : \"Indonesia\",\r\n    \"latlong\" : null,\r\n    \"device_token\" : \"03df25c845d460bcdad7802d2vf6fc1dfde97283bf75cc993eb6dca835ea2e2f\",\r\n    \"device_type\" : \"0\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url_test}}/register",
+							"host": [
+								"{{base_url_test}}"
+							],
+							"path": [
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "01 - 001.1 - Invalid Register User By Phone",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"\r",
+									"// pm.test(\"Successful POST request\", function () {\r",
+									"//     pm.expect(pm.response.json().data.user.phone).to.be.null;\r",
+									"// });\r",
+									"pm.test(\"Fail POST\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([406]);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"phone\" : \"32132132321\",\r\n    \"password\" : \"agil0207\",\r\n    \"country\" : \"Indonesia\",\r\n    \"latlong\" : null,\r\n    \"device_token\" : \"03df25c845d460bcdad7802d2vf6fc1dfde97283bf75cc993eb6dca835ea2e2f\",\r\n    \"device_type\" : \"0\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url_test}}/register",
+							"host": [
+								"{{base_url_test}}"
+							],
+							"path": [
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "01 - 002 - OTP",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Successful POST request\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([201, 202]);\r",
+									"});\r",
+									"\r",
+									"var jsonData = pm.response.json();\r",
+									"pm.globals.set(\"token_access\", jsonData.data.user.access_token);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"user_id\" : \"052794b1-5df3-4bb0-a954-11ce5af37858\",\r\n    \"otp_code\" : \"0223\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url_test}}/register/otp/match",
+							"host": [
+								"{{base_url_test}}"
+							],
+							"path": [
+								"register",
+								"otp",
+								"match"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "01 - 002.1 -Invalid user_id Register Matching OTP",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 500\", function () {\r",
+									"    pm.response.to.have.status(500);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"errors\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include([\"Couldn't find User with 'id'=123123123\"]);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"user_id\" : \"123123123\",\r\n    \"otp_code\" : \"0223\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url_test}}/register/otp/match",
+							"host": [
+								"{{base_url_test}}"
+							],
+							"path": [
+								"register",
+								"otp",
+								"match"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "01 - 002.2 - Invalid otp_code Register Matching OTP",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Invalid Input OTP\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([406]);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"user_id\" : \"052794b1-5df3-4bb0-a954-11ce5af37858\",\r\n    \"otp_code\" : \"123123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url_test}}/register/otp/match",
+							"host": [
+								"{{base_url_test}}"
+							],
+							"path": [
+								"register",
+								"otp",
+								"match"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "01 - 003 - resend OTP",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code name has string\", function () {\r",
+									"    pm.response.to.have.status(\"Created\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Your test name\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.data.user.country).to.eql(\"Indonesia\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"phone\" : \"089089123123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url_test}}/register/otp/request",
+							"host": [
+								"{{base_url_test}}"
+							],
+							"path": [
+								"register",
+								"otp",
+								"request"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "01 - 003.1 - Invalid resend OTP",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Invalid Input Phone\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([406]);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"phone\" : \"0002222\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url_test}}/register/otp/request",
+							"host": [
+								"{{base_url_test}}"
+							],
+							"path": [
+								"register",
+								"otp",
+								"request"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "01 - 004 - Remove Phone Number",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Your test name\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.data).to.eql(\"Success remove user +6289089123123\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Status code is 201\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"phone\" : \"089089123123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url_test}}/register/remove",
+							"host": [
+								"{{base_url_test}}"
+							],
+							"path": [
+								"register",
+								"remove"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "02 - Message",
+			"item": [
+				{
+					"name": "02 - 001 - send message",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Successful POST request\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([201, 202]);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Your test name\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.data).to.eql(\"Success send message\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "bearer {{token_access}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "user_id",
+									"value": "052794b1-5df3-4bb0-a954-11ce5af37858",
+									"type": "text"
+								},
+								{
+									"key": "message",
+									"value": "try to send message",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url_test}}/message/send",
+							"host": [
+								"{{base_url_test}}"
+							],
+							"path": [
+								"message",
+								"send"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "02 - 001.1 - Invalid send message without message",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Invalid send message\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([406]);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"error message\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"message is missing\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "bearer {{token_access}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "user_id",
+									"value": "f394a455-31af-4ec7-b061-47f1bf945ce5",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url_test}}/message/send",
+							"host": [
+								"{{base_url_test}}"
+							],
+							"path": [
+								"message",
+								"send"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "02 - 002 - Get Message",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Status code name OK\", function () {\r",
+									"    pm.response.to.have.status(\"OK\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "bearer {{token_access}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url_test}}/message/:user_id",
+							"host": [
+								"{{base_url_test}}"
+							],
+							"path": [
+								"message",
+								":user_id"
+							],
+							"variable": [
+								{
+									"key": "user_id",
+									"value": "052794b1-5df3-4bb0-a954-11ce5af37858"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "02 - 002.1 - Invalid Get Message Without Input user_id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404\", function () {\r",
+									"    pm.response.to.have.status(404);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Status code name Not Found\", function () {\r",
+									"    pm.response.to.have.status(\"Not Found\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "bearer {{token_access}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url_test}}/message/:user_id",
+							"host": [
+								"{{base_url_test}}"
+							],
+							"path": [
+								"message",
+								":user_id"
+							],
+							"variable": [
+								{
+									"key": "user_id",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "03 - Notification",
+			"item": [
+				{
+					"name": "03 - 001 - Cek App Version",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Successful POST request\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([201, 202]);\r",
+									"});\r",
+									"pm.test(\"Succes\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"success\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "bearer {{token_access}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url_test}}/notification/:grub_id/:token",
+							"host": [
+								"{{base_url_test}}"
+							],
+							"path": [
+								"notification",
+								":grub_id",
+								":token"
+							],
+							"variable": [
+								{
+									"key": "grub_id",
+									"value": "1"
+								},
+								{
+									"key": "token",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "04 - Profile",
+			"item": [
+				{
+					"name": "04 - 001 - Get Current User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Verify Data User Name\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.data.user.id).to.eql(\"SG50831\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "bearer {{token_access}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url_test}}/profile/me",
+							"host": [
+								"{{base_url_test}}"
+							],
+							"path": [
+								"profile",
+								"me"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "04 - 001.1 - Invalid Get Current User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401\", function () {\r",
+									"    pm.response.to.have.status(401);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Error Invalid Token\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"Invalid token\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "bearer 282371289123",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url_test}}/profile/me",
+							"host": [
+								"{{base_url_test}}"
+							],
+							"path": [
+								"profile",
+								"me"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "04 - 002 - Update Profile User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Successful POST request\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([201, 202]);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Verify Hometown\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.data.user.hometown).to.eql(\"Tulungagung\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "bearer {{token_access}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\" : \"John\",\r\n    \"gender\" : 0,\r\n    \"birthday\" : \"1994-08-05\",\r\n    \"hometown\" : \"Tulungagung\",\r\n    \"bio\" : \"Try Hard to Learn\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url_test}}/profile",
+							"host": [
+								"{{base_url_test}}"
+							],
+							"path": [
+								"profile"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "04 - 003 - Update Education User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Successful POST request\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([201, 202]);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Verify School\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.data.user.education.school_name).to.eql(\"Sekolah Cilsy\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "bearer {{token_access}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"school_name\" : \"Sekolah Cilsy\",\r\n    \"graduation_time\" : \"2022-04-25\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url_test}}/profile/education",
+							"host": [
+								"{{base_url_test}}"
+							],
+							"path": [
+								"profile",
+								"education"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "04 - 004 - Update Career User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Successful POST request\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([201, 202]);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Verify Company\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.data.user.career.company_name).to.eql(\"KANO\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "bearer {{token_access}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"position\" : \"staf\",\r\n    \"company_name\" : \"KANO\",\r\n    \"starting_from\" : \"2015-10-05\",\r\n    \"ending_in\" : \"2021-11-01\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url_test}}/profile/career",
+							"host": [
+								"{{base_url_test}}"
+							],
+							"path": [
+								"profile",
+								"career"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "04 - 004.1 - Invalid Update Career User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"POST request fail\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([406]);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Error message\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"ending_in is invalid\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "bearer {{token_access}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"position\" : \"staf\",\r\n    \"company_name\" : \"KANO\",\r\n    \"starting_from\" : \"2015-10-05\",\r\n    \"ending_in\" : \"1\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url_test}}/profile/career",
+							"host": [
+								"{{base_url_test}}"
+							],
+							"path": [
+								"profile",
+								"career"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "05 - Upload",
+			"item": [
+				{
+					"name": "05 - 001 - Upload Profile Picture",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Successful POST request\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([201, 202]);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Status code name has Created\", function () {\r",
+									"    pm.response.to.have.status(\"Created\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "bearer {{token_access}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "image",
+									"type": "file",
+									"src": "/C:/Users/agild/Pictures/calendar.png"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url_test}}/uploads/profile",
+							"host": [
+								"{{base_url_test}}"
+							],
+							"path": [
+								"uploads",
+								"profile"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "05 - 002 - Delete Profile Picture",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Errors\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"undefined method `profile_picture' for nil:NilClass\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Status code\", function () {\r",
+									"    pm.response.to.have.status(204);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "bearer {{token_access}}",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"url": {
+							"raw": "{{base_url_test}}/uploads/profile?id=1cd9e0e9-f9e0-4e24-89bf-d9735564c544",
+							"host": [
+								"{{base_url_test}}"
+							],
+							"path": [
+								"uploads",
+								"profile"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "1cd9e0e9-f9e0-4e24-89bf-d9735564c544"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "05 - 003 - Set Default Picture",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Successful POST request\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([201, 202]);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Your test name\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.data).to.eql(\"Success update default profile with picture id 1cd9e0e9-f9e0-4e24-89bf-d9735564c544\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "bearer {{token_access}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\" : \"1cd9e0e9-f9e0-4e24-89bf-d9735564c544\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url_test}}/uploads/profile/default",
+							"host": [
+								"{{base_url_test}}"
+							],
+							"path": [
+								"uploads",
+								"profile",
+								"default"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "05 - 003.1 - Invalid Set Default Picture",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Invalid POST request\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([500]);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Error message\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"Couldn't find UserPicture with 'id'=1\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "bearer {{token_access}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\" : \"1\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url_test}}/uploads/profile/default",
+							"host": [
+								"{{base_url_test}}"
+							],
+							"path": [
+								"uploads",
+								"profile",
+								"default"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "05 - 004 - Cover Profile Picture",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Successful POST request\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([201, 202]);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Status code name has Created\", function () {\r",
+									"    pm.response.to.have.status(\"Created\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "bearer {{token_access}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "image",
+									"type": "file",
+									"src": "/C:/Users/agild/Pictures/Camera Roll/coveimage.jpg"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url_test}}/uploads/cover",
+							"host": [
+								"{{base_url_test}}"
+							],
+							"path": [
+								"uploads",
+								"cover"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "06 - Oauth",
+			"item": [
+				{
+					"name": "06 - 001 - Get Credentials",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Your test name\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.data.user.name).to.eql(\"John\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Content-Type is present\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "bearer {{token_access}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url_test}}/oauth/credentials?access_token=bearer {{token_access}}",
+							"host": [
+								"{{base_url_test}}"
+							],
+							"path": [
+								"oauth",
+								"credentials"
+							],
+							"query": [
+								{
+									"key": "access_token",
+									"value": "bearer {{token_access}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "06 - 002 - Login User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// var jsonData = pm.response.json();\r",
+									"// pm.globals.set(\"token_login\", jsonData.data.user.access_token);\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "bearer {{token_access}}",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "phone",
+									"value": "089089123123",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "agil0207",
+									"type": "text"
+								},
+								{
+									"key": "latlong",
+									"value": "null",
+									"type": "text"
+								},
+								{
+									"key": "device_token",
+									"value": "03df25c845d460bcdad7802d2vf6fc1dfde97283bf75cc993eb6dca835ea2e2f",
+									"type": "text"
+								},
+								{
+									"key": "device_type",
+									"value": "0",
+									"type": "text"
+								},
+								{
+									"key": "message",
+									"value": "You need verification phone number",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "user_id",
+									"value": "f394a455-31af-4ec7-b061-47f1bf945ce5",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url_test}}/oauth/sign_in",
+							"host": [
+								"{{base_url_test}}"
+							],
+							"path": [
+								"oauth",
+								"sign_in"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "06 - 003 - Revoke Token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Verify code revoken\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									"pm.test(\"Errors code 500\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"Error connecting to Redis on 127.0.0.1:6379 (Errno::ECONNREFUSED)\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "bearer {{token_access}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "access_token",
+									"value": "bearer {{token_access}}",
+									"type": "text"
+								},
+								{
+									"key": "confirm",
+									"value": "1",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url_test}}/oauth/revoke",
+							"host": [
+								"{{base_url_test}}"
+							],
+							"path": [
+								"oauth",
+								"revoke"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
