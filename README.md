@@ -1,4 +1,4 @@
-# How to Run Colection Postman
+# How to Run Collection Postman
 Click setting at title PrivyID and then click Run Collection
 
 # How to Run at Jmeter
